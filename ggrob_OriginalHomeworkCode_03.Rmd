@@ -1,0 +1,539 @@
+---
+title: "ggrob_OriginalHomeworkCode_03"
+author: "Gianna Grob"
+date: "10/2/2019"
+output: html_document
+---
+
+*** 
+
+# Introduction
+
+***
+
+This is the code for the third homework assignment for AN597. It utilizes code from Modules 3-8. The data included in this homework includes the first and last name and gender of the entire population of 1000 people who have survived the zombie apocalypse and are now ekeing out an existence somewhere on the East Coast, along with several other variables (height, weight, age, number of years of education, number of zombies they have killed, and college major).
+
+## Loading in the data and packages needed
+
+First, I have to load in the data set provided by Professor Schmiit from his [GitHub repo](https://github.com/fuzzyatelin/fuzzyatelin.github.io/tree/master/AN597_Fall19/). 
+
+```{r}
+library(curl)
+f <- f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN597_Fall19/zombies.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE) #Our vector for all of the zombie data is "d". This will be the vector we use for the homework when the whole data set is needed.
+head(d) #See a summary of the data.
+
+library(ggplot2) #Load ggplot2 package. 
+```
+
+## Question 1 
+
+Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples.
+
+### Height:
+
+```{r}
+h <- d$height #Create vector that has all of the heights of the people in the data set.
+
+#Finding the mean:
+
+pm1 <- function(h){sum(h)/length(h)}
+pm1(h)
+
+#Finding the standard deviation:
+
+var(h) * ((length(h)-1)/length(h)) #The difference from sample variance is by a factor of ((N-1)/N), so I do that here.
+```
+
+### Weight:
+
+```{r}
+w <- d$weight #Create vector that has all of the weights of the people in the data set.
+
+#Finding the mean:
+
+pm2 <- function(h){sum(w)/length(w)}
+pm2(w)
+
+#Finding the standard deviation:
+
+var(w) * ((length(w)-1)/length(w))
+```
+
+
+### Age:
+
+```{r}
+a <- d$age #Create vector that has all of the ages of the people in the data set.
+
+#Finding the mean:
+
+pm3 <- function(a){sum(a)/length(a)}
+pm3(a)
+
+#Finding the standard deviation:
+
+var(a) * ((length(a)-1)/length(a))
+```
+
+
+### Number of Zombies Killed:
+
+```{r}
+z <- d$zombies_killed #Create vector that has all of the numbers of zombies killed by the people in the data set.
+
+#Finding the mean:
+
+pm4 <- function(z){sum(z)/length(z)}
+pm4(z)
+
+#Finding the standard deviation:
+
+var(z) * ((length(z)-1)/length(z))
+```
+
+
+### Years of Education:
+
+```{r}
+y <- d$years_of_education #Create vector that has all of the years of education of the people in the data set.
+
+#Finding the mean:
+
+pm5 <- function(y){sum(y)/length(y)}
+pm5(y)
+
+#Finding the standard deviation:
+
+var(y) * ((length(y)-1)/length(y))
+```
+
+## Question 2
+
+Use {ggplot} to make boxplots of each of these variables by gender.
+
+```{r}
+g <- d$gender #Create vector for gender for the boxplots.
+```
+
+I will be using the vectors that I created in the last question, as well as the "g" vector I just created in the boxplots. The "g" vector will always take the "x" value, while the other vectors will take the place of the "y" value in the scatterplots.
+
+### Height
+
+```{r}
+ggplot(d, aes(x = g, y = h)) + labs(title="Height by Gender", x="Gender", y="Height") + geom_boxplot() #Create boxplot for height with gender.
+```
+
+### Weight
+
+```{r}
+ggplot(d, aes(x = g, y = w)) + labs(title="Weight by Gender", x="Gender", y="Weight") + geom_boxplot() #Create boxplot for weight with gender.
+```
+
+
+### Age
+
+```{r}
+ggplot(d, aes(x = g, y = a)) + labs(title="Age by Gender", x="Gender", y="Age") + geom_boxplot() #Create boxplot for age with gender.
+```
+
+
+### Number of Zombies Killed
+
+```{r}
+ggplot(d, aes(x = g, y = z)) + labs(title="Number of Zombies Killed by Gender", x="Gender", y="Zombies Killed") + geom_boxplot() #Create boxplot for number of zombies killed with gender.
+```
+
+
+### Years of Education
+
+```{r}
+ggplot(d, aes(x = g, y = y)) + labs(title="Years of Education by Gender", x="Gender", y="Years of Education") + geom_boxplot() #Create boxplot for years of education with gender.
+```
+
+
+## Question 3
+
+Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way?
+
+I will continue to use the vectors I created in the above questions. These will take the place of the "x" and "y" values in the scatterplots.
+
+### Height Scatterplot
+
+```{r}
+ggplot(d, aes(x=a, y=h)) + geom_point() + geom_smooth(method=lm) + labs(title="Height in Relation to Age", x="Age", y="Height") + theme_classic() #Create scatterplot with height in relationship to age.
+```
+
+### Weight Scatterplot
+
+```{r}
+ggplot(d, aes(x=a, y=w)) + geom_point() + geom_smooth(method=lm) + labs(title="Weight in Relation to Age", x="Age", y="Weight") + theme_classic() #Create scatterplot with weight in relationship to age.
+```
+
+According to the scatterplots, height is more related to age than weight is related to age. They both appear to be slightly related, as the regression lines follow a positive linear pattern for both, but the line is more steep for the height scatterplot. Therefore, I would say height is more related to age than weight.
+
+## Question 4
+
+Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
+
+In this question I will continue to use the vectors created earlier.
+
+### Height
+
+```{r}
+hist(h, probability = TRUE) #Create histogram for height values
+
+qqnorm(h,main="QQ Plot for Height")
+qqline(h,col="gray") #Create Q-Q plot for height values.
+```
+
+According to the two plots, height has a normal distribution. 
+
+### Weight
+
+```{r}
+hist(w, probability = TRUE) #Create histogram for weight values
+
+qqnorm(w,main="QQ Plot for Weight")
+qqline(w,col="gray") #Create Q-Q plot for weight values.
+```
+
+According to the two plots, weight has a normal distribution.
+
+### Age
+
+```{r}
+hist(a, probability = TRUE) #Create histogram for age values
+
+qqnorm(a,main="QQ Plot for Age")
+qqline(a,col="gray") #Create Q-Q plot for age values.
+```
+
+According to the two plots, age has a normal distrbution. 
+
+### Number of Zombies Killed
+
+```{r}
+hist(z, probability = TRUE) #Create histogram for number of zombies killed values
+
+qqnorm(z,main="QQ Plot for Zombies Killed")
+qqline(z,col="gray") #Create Q-Q plot for number of zombies killed values.
+```
+
+According to the two plots, the number of zombies killed does not have a normal distribution. It appears to have a Poisson distribution, which I can test for below.
+
+```{r}
+plot(dpois(0:12, lambda = 2.992)) #Create plot showing Poisson distribution with range being 0 to 12, the max amount of zombies killed, and lambda being the mean.
+```
+
+This looks more normally distributed than before. 
+
+### Years of Education
+
+```{r}
+hist(y, probability = TRUE) #Create histogram for years of education values
+
+qqnorm(y,main="QQ Plot for Years of Education")
+qqline(y,col="gray") #Create Q-Q plot for years of education values.
+```
+
+According to the two plots, the number of zombies killed does not have a normal distribution. It appears to have a Poisson distribution, which I can test for below.
+
+```{r}
+plot(dpois(0:10, lambda = 2.996)) #Create plot for Poisson distribution with range being 0 to 10, 8 is the max, but I think 9 is a weird place to cut it off, as well as with lambda being the mean.
+```
+
+This also looks more normally distributed than before.
+
+## Question 5
+
+Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable, and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…
+
+```{r}
+s <- d[sample(nrow(d), 30), ] #Use vector with our dataset to create one sample of 30 people by picking whole rows instead of individual values.
+s #Check our random sample
+```
+
+### Height
+
+```{r}
+#Create vector for height with small sample:
+sh <- s$height 
+sh
+
+#Finding sample mean:
+shm <- mean(sh) #Use mean function to find the sample mean
+shm
+
+#Finding sample standard deviation:
+shsd <- sd(sh) #Use the standard deviation function to find the sample standard deviation.
+shsd
+
+#Finding standard error:
+hse <- shsd/sqrt(30) #Use standard deviation and devide by sample size to find the standard error
+hse
+
+#Finding CI:
+lowerh <- shm - qnorm(1 - 0.05/shsd) * hse #Find the lower confidence interval for 95% with mean, standard deviation, and standard error
+upperh <- shm + qnorm(1 - 0.05/shsd) * hse #Find the upper confidence interval for 95% with mean, standard deviation, and standard error
+cih <- c(lowerh, upperh) #Put two values into confidence interval function 
+cih
+```
+
+### Weight
+
+```{r}
+#Create vector for weight with small sample:
+sw <- s$weight 
+sw
+
+#Finding sample mean:
+swm <- mean(sw) #Use mean function to find the sample mean
+swm
+
+#Finding sample standard deviation:
+swsd <- sd(sw) #Use the standard deviation function to find the sample standard deviation.
+swsd
+
+#Finding standard error:
+wse <- swsd/sqrt(30) #Use standard deviation and devide by sample size to find the standard error
+wse
+
+#Finding CI:
+lowerw <- swm - qnorm(1 - 0.05/swsd) * wse #Find the lower confidence interval for 95% with mean, standard deviation, and standard error
+upperw <- swm + qnorm(1 - 0.05/swsd) * wse #Find the upper confidence interval for 95% with mean, standard deviation, and standard error
+ciw <- c(lowerw, upperw) #Put two values into confidence interval function 
+ciw
+```
+
+### Age
+
+```{r}
+#Create vector for age with small sample:
+sa <- s$age  
+sa
+
+#Finding sample mean:
+sam <- mean(sa) #Use mean function to find the sample mean
+sam
+
+#Finding sample standard deviation:
+sasd <- sd(sa) #Use the standard deviation function to find the sample standard deviation.
+sasd
+
+#Finding standard error:
+ase <- sasd/sqrt(30) #Use standard deviation and devide by sample size to find the standard error
+ase
+
+#Finding CI:
+lowera <- sam - qnorm(1 - 0.05/sasd) * ase #Find the lower confidence interval for 95% with mean, standard deviation, and standard error
+uppera <- sam + qnorm(1 - 0.05/sasd) * ase #Find the upper confidence interval for 95% with mean, standard deviation, and standard error
+cia <- c(lowera, uppera) #Put two values into confidence interval function 
+cia
+```
+
+### Number of Zombies Killed
+
+Note: The confidence interval code will have to be different due to a Poisson distribution!
+
+```{r}
+#Create vector for number of zombies killed with small sample:
+sz <- s$zombies_killed
+sz
+
+#Finding sample mean:
+szm <- mean(sz) #Use mean function to find the sample mean
+szm
+
+#Finding sample standard deviation:
+szsd <- sd(sz) #Use the standard deviation function to find the sample standard deviation.
+szsd
+
+#Finding standard error:
+zse <- szsd/sqrt(30) #Use standard deviation and devide by sample size to find the standard error
+zse
+
+#Finding CI for Poisson distribution:
+lowerz <- szm - qpois(0.05, szm) * zse #Find the lower confidence interval for 95% with mean, standard deviation, and standard error
+upperz <- szm + qpois(0.95, szm) * zse #Find the upper confidence interval for 95% with mean, standard deviation, and standard error
+ciz <- c(lowerz, upperz) #Put two values into confidence interval function 
+ciz
+```
+
+### Years of Education
+
+Note: The confidence interval code will have to be different due to a Poisson distribution!
+
+```{r}
+#Create vector for years of education with small sample:
+sy <- s$years_of_education
+sy
+
+#Finding sample mean:
+sym <- mean(sy) #Use mean function to find the sample mean
+sym
+
+#Finding sample standard deviation:
+sysd <- sd(sy) #Use the standard deviation function to find the sample standard deviation.
+sysd
+
+#Finding standard error:
+yse <- sysd/sqrt(30) #Use standard deviation and devide by sample size to find the standard error
+yse
+
+#Finding CI for Poisson distribution:
+lowery <- sym - qpois(0.05, sym) * yse #Find the lower confidence interval for 95% with mean, standard deviation, and standard error
+uppery <- sym + qpois(0.95, sym) * yse #Find the upper confidence interval for 95% with mean, standard deviation, and standard error
+ciy <- c(lowery, uppery) #Put two values into confidence interval function 
+ciy
+```
+
+## Question 6
+
+Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors estimated in [5]? What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
+
+### Height
+
+```{r}
+# Create a vector for the variable with 99 simulations:
+nsh <- replicate(99,sample(d$height, 30, replace = FALSE)) 
+nsh
+
+#Find mean:
+nshm <- mean(nsh)
+nshm
+
+#Find standard deviation:
+nshsd <- sd(nsh)
+nshsd
+```
+
+The means are very close for both the one sample and the 99 samples, but the standard deviations are not as close.
+
+### Weight
+
+```{r}
+# Create a vector for the variable with 99 simulations:
+nsw <- replicate(99,sample(d$weight, 30, replace = FALSE)) 
+nsw
+
+#Find mean:
+nswm <- mean(nsw)
+nswm
+
+#Find standard deviation:
+nswsd <- sd(nsw)
+nswsd
+```
+
+The means for the one sample and the 99 samples are very close while the standard deviations are not as close.
+
+### Age
+
+```{r}
+# Create a vector for the variable with 99 simulations:
+nsa <- replicate(99,sample(d$age, 30, replace = FALSE)) 
+nsa
+
+#Find mean:
+nsam <- mean(nsa)
+nsam
+
+#Find standard deviation:
+nsasd <- sd(nsa)
+nsasd
+```
+
+The means for the one sample and the 99 samples are very close while the standard deviations are not as close.
+
+### Number of Zombies Killed
+
+```{r}
+# Create a vector for the variable with 99 simulations:
+nsz <- replicate(99,sample(d$zombies_killed, 30, replace = FALSE)) 
+nsz
+
+#Find mean:
+nszm <- mean(nsz)
+nszm
+
+#Find standard deviation:
+nszsd <- sd(nsz)
+nszsd
+```
+
+The means for the one sample and the 99 samples are very close and so are the standard deviation values.
+
+### Years of Education
+
+```{r}
+# Create a vector for the variable with 99 simulations:
+nsy <- replicate(99,sample(d$years_of_education, 30, replace = FALSE)) 
+nsy
+
+#Find mean:
+nsym <- mean(nsy)
+nsym
+
+#Find standard deviation:
+nsysd <- sd(nsy)
+nsysd
+```
+
+The means for the one sample and the 99 samples are very close and so are the standard deviation values.
+
+### Testing for Normal Distribution
+
+I now have to test to see if the 99 samples for each variable are normally distributed. I'm asusming all of them will be except for the two variables that were not previously: number of zombies killed and years of education. Let's use a Q-Q plot for this.
+
+### Height
+
+```{r}
+qqnorm(nsh,main="QQ Plot for New Sample Height")
+qqline(nsh,col="gray") #Create Q-Q plot for new sample height values.
+```
+
+The same as before, the height values are normally distributed.
+
+### Weight
+
+```{r}
+qqnorm(nsw,main="QQ Plot for New Sample Weight")
+qqline(nsw,col="gray") #Create Q-Q plot for new sample weight values.
+```
+
+The same as before, the weight values are normally distributed.
+
+### Age
+
+```{r}
+qqnorm(nsa,main="QQ Plot for New Sample Age")
+qqline(nsa,col="gray") #Create Q-Q plot for new sample age values.
+```
+
+The same as before, the age values are normally distributed.
+
+### Number of Zombies Killed
+
+```{r}
+qqnorm(nsz,main="QQ Plot for New Sample Number of Zombies Killed")
+qqline(nsz,col="gray") #Create Q-Q plot for new sample number of zombies killed values.
+```
+
+The same as before, the number of zombies killed is not normally distributed with 99 random samples.
+
+### Years of Education
+
+```{r}
+qqnorm(nsy,main="QQ Plot for New Sample Years of Education")
+qqline(nsy,col="gray") #Create Q-Q plot for new sample years of education values.
+```
+
+The same as before, the years of education is not normally distributed with 99 random samples.
+
+## Challenges
+1. Testing for what the distributions were for the number of zombies killed and the years of education.
+2. Finding standard error for Question 5.
+3. Creating confidence intervals for Question 5, both for the normal and Poisson distributions. 
+4. Creating 99 more random samples for Question 6. Did I do it right?
+5. I'm kind of confused about what Question 6 is asking. Does he want me to find the means and standard deviations for the two vectors I've created, or just of the 99 more samples I found? I went with the 99 more samples found.
